@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Desafío Interactivo de Informática</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --secondary: #0f766e;
+      --accent: #f59e0b;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --success: #16a34a;
+      --danger: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      background: var(--card);
+      width: 100%;
+      max-width: 880px;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.45);
+      overflow: hidden;
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .header {
+      background: linear-gradient(90deg, #1e3a8a, #0284c7);
+      color: white;
+      padding: 24px 30px;
+      text-align: center;
+    }
+    .header h1 { font-size: 1.7rem; margin-bottom: 6px; letter-spacing: -0.5px; }
+    .header p { font-size: 0.95rem; opacity: 0.9; }
+    .content { padding: 30px; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { font-weight: 600; margin-bottom: 6px; font-size: 0.92rem; color: #334155; }
+    .form-group input, .form-group select {
+      padding: 12px 14px;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-light); }
+    .mode-info {
+      background: #eff6ff;
+      border: 1.5px solid #bfdbfe;
+      color: #1e3a8a;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 22px;
+    }
+    .locked-banner {
+      background: #fef2f2;
+      border: 1.5px solid #fecaca;
+      color: #991b1b;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+    .btn {
+      background: linear-gradient(90deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37,99,235,0.4); }
+    .btn:active:not(:disabled) { transform: translateY(0); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-secondary {
+      background: linear-gradient(90deg, #0f766e, #0d9488);
+      box-shadow: 0 4px 12px rgba(15,118,110,0.3);
+      margin-top: 12px;
+    }
+    .btn-outline {
+      background: #f8fafc;
+      color: #1e3a8a;
+      border: 2px solid #93c5fd;
+      box-shadow: none;
+      margin-top: 12px;
+    }
+    .btn-outline:hover:not(:disabled) { background: #eff6ff; }
+    .btn-danger {
+      background: linear-gradient(90deg, #dc2626, #b91c1c);
+      box-shadow: 0 4px 12px rgba(220,38,38,0.25);
+    }
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 0.85rem;
+      width: auto;
+      border-radius: 8px;
+      box-shadow: none;
+    }
+
+    .admin-trigger-wrap {
+      margin-top: 14px;
+      text-align: center;
+    }
+    .admin-trigger-link {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .admin-trigger-link:hover {
+      color: #475569;
+    }
+
+    .quiz-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .badge {
+      background: #e0e7ff;
+      color: #1e3a8a;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .timer-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fef3c7;
+      color: #b45309;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      border: 2px solid #f59e0b;
+    }
+    .timer-box.danger {
+      background: #fee2e2;
+      color: #dc2626;
+      border-color: #ef4444;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7, #10b981);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .illustration-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .illustration-box svg { max-width: 100%; height: 120px; }
+
+    .question-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+
+    .options-list { display: flex; flex-direction: column; gap: 12px; }
+    .option-btn {
+      text-align: left;
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #1e293b;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .option-btn:hover:not(:disabled) {
+      background: #eff6ff;
+      border-color: #3b82f6;
+    }
+    .option-letter {
+      background: #e2e8f0;
+      color: #334155;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .option-btn.correct {
+      background: #dcfce7;
+      border-color: #16a34a;
+      color: #14532d;
+      font-weight: 700;
+    }
+    .option-btn.correct .option-letter { background: #16a34a; color: white; }
+    .option-btn.wrong {
+      background: #fee2e2;
+      border-color: #dc2626;
+      color: #7f1d1d;
+    }
+    .option-btn.wrong .option-letter { background: #dc2626; color: white; }
+
+    .feedback-msg {
+      margin-top: 18px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      text-align: center;
+      display: none;
+    }
+    .feedback-msg.show { display: block; }
+
+    .result-card {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .score-circle {
+      width: 136px;
+      height: 136px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1e3a8a, #0284c7);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 18px auto;
+      box-shadow: 0 10px 25px rgba(2,132,199,0.35);
+    }
+    .score-circle span.num { font-size: 2rem; font-weight: 800; line-height: 1; }
+    .score-circle span.lbl { font-size: 0.85rem; opacity: 0.9; margin-top: 4px; }
+    .student-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      text-align: left;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      margin-top: 16px;
+    }
+    .student-summary div strong { display: block; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+    .student-summary div span { font-size: 1rem; font-weight: 700; color: #0f172a; }
+
+    .answers-log, .db-list {
+      margin-top: 16px;
+      text-align: left;
+      max-height: 320px;
+      overflow-y: auto;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .answer-item, .db-row {
+      padding: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.92rem;
+    }
+    .answer-item:last-child, .db-row:last-child { border-bottom: none; }
+    .db-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .db-toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .tag-ok { color: #15803d; font-weight: 700; }
+    .tag-bad { color: #b91c1c; font-weight: 700; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>🎓 Desafío Interactivo de Informática y Lógica</h1>
+    <p>25 preguntas • Puntaje máximo: 100 pts • 4 pts por pregunta</p>
+  </div>
+
+  <div id="screen-register" class="content">
+    <h2 style="margin-bottom: 8px; color: #0f172a;">Registro del Estudiante</h2>
+    <p style="color: #64748b; margin-bottom: 22px; font-size: 0.95rem;">Complete sus datos personales y académicos antes de iniciar el cuestionario.</p>
+
+    <div id="locked-banner" class="locked-banner hidden">
+      🔒 Este navegador ya registró un intento o evaluación finalizada. Solo se permite un intento por evaluación.
+    </div>
+
+    <form id="register-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="nombre">Nombre *</label>
+          <input type="text" id="nombre" placeholder="Ej. Juan Carlos" required>
+        </div>
+        <div class="form-group">
+          <label for="apellido">Apellido *</label>
+          <input type="text" id="apellido" placeholder="Ej. Pérez López" required>
+        </div>
+        <div class="form-group">
+          <label for="sede">Sede donde estudia *</label>
+          <select id="sede" required>
+            <option value="">-- Seleccione su sede --</option>
+            <option value="Condega">Condega</option>
+            <option value="Estelí">Estelí</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="sexo">Sexo *</label>
+          <select id="sexo" required>
+            <option value="">-- Seleccione --</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mode-info">
+        📋 <strong>Evaluación única:</strong> 25 preguntas aleatorias • Puntaje máximo: <strong>100 puntos</strong> (4 pts por pregunta) • 45 seg por pregunta • Un solo intento permitido.
+      </div>
+
+      <button type="submit" id="start-btn" class="btn">🚀 Iniciar Evaluación</button>
+    </form>
+
+    <!-- Contenedor administrativo oculto hasta validar contraseña -->
+    <div id="admin-panel-register" class="hidden">
+      <button type="button" id="open-db-btn" class="btn btn-outline">🗄️ Ver Base de Datos de Alumnos (<span id="db-count">0</span>)</button>
+    </div>
+
+    <div class="admin-trigger-wrap">
+      <button type="button" class="admin-trigger-link" onclick="requestAdminAccess()">Acceso docente</button>
+    </div>
+  </div>
+
+  <div id="screen-quiz" class="content hidden">
+    <div class="quiz-top">
+      <div class="badge" id="student-badge">Estudiante</div>
+      <div class="badge" id="q-counter">Pregunta 1 de 25</div>
+      <div class="badge" id="live-score">Puntaje: 0 / 100 pts</div>
+      <div class="timer-box" id="timer-box">⏱️ <span id="timer-text">00:45</span></div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <div class="illustration-box" id="illustration-box"></div>
+
+    <div class="question-text" id="question-text">Cargando pregunta...</div>
+
+    <div class="options-list" id="options-list"></div>
+
+    <div class="feedback-msg" id="feedback-msg"></div>
+
+    <button id="next-btn" class="btn hidden" style="margin-top: 20px;">Siguiente Pregunta ➡️</button>
+  </div>
+
+  <div id="screen-result" class="content hidden">
+    <div class="result-card">
+      <div class="score-circle">
+        <span class="num" id="final-score">0</span>
+        <span class="lbl" id="final-percent">de 100 pts</span>
+      </div>
+      <h2 id="result-title" style="color: #0f172a; margin-bottom: 6px;">¡Evaluación Finalizada!</h2>
+      <p id="result-subtitle" style="color: #475569;">Has completado las 25 preguntas del desafío.</p>
+      <p id="email-status" style="margin-top: 8px; font-weight: 600; font-size: 0.92rem; color: #1e3a8a;"></p>
+
+      <div class="student-summary" id="student-summary"></div>
+
+      <h3 style="margin-top: 20px; margin-bottom: 8px; font-size: 1rem; color: #0f172a; text-align: left;">📝 Registro de Respuestas del Alumno</h3>
+      <div class="answers-log" id="answers-log"></div>
+    </div>
+
+    <!-- Contenedor administrativo oculto hasta validar contraseña -->
+    <div id="admin-panel-result" class="hidden">
+      <button type="button" id="download-csv-btn" class="btn btn-secondary">📥 Descargar Este Registro (.CSV)</button>
+      <button type="button" id="result-open-db-btn" class="btn btn-outline">🗄️ Abrir Base de Datos Completa</button>
+    </div>
+
+    <div class="admin-trigger-wrap">
+      <button type="button" class="admin-trigger-link" onclick="requestAdminAccess()">Acceso docente</button>
+    </div>
+
+    <div class="locked-banner" style="margin-top: 14px; margin-bottom: 0;">
+      🔒 Evaluación bloqueada: no es posible volver a comenzar este examen desde este navegador.
+    </div>
+  </div>
+
+  <div id="screen-db" class="content hidden">
+    <div class="db-toolbar">
+      <div>
+        <h2 style="color: #0f172a;">🗄️ Base de Datos Local de Alumnos</h2>
+        <p style="color: #64748b; font-size: 0.9rem;">Almacenada en IndexedDB dentro de este navegador</p>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <select id="db-filter-sede" style="padding:8px 12px; border-radius:8px; border:2px solid #cbd5e1;">
+          <option value="ALL">Todas las sedes</option>
+          <option value="Condega">Condega</option>
+          <option value="Estelí">Estelí</option>
+        </select>
+        <button type="button" id="export-all-csv-btn" class="btn btn-secondary btn-sm">📥 Exportar Todo (.CSV)</button>
+        <button type="button" id="export-json-btn" class="btn btn-outline btn-sm" style="margin-top:0;">📄 Exportar (.JSON)</button>
+        <button type="button" id="clear-db-btn" class="btn btn-danger btn-sm">🗑️ Vaciar BD</button>
+      </div>
+    </div>
+
+    <div class="db-list" id="db-list"></div>
+
+    <div id="db-detail-box" class="answers-log hidden" style="margin-top: 14px;"></div>
+
+    <button type="button" id="back-from-db-btn" class="btn" style="margin-top: 18px;">⬅️ Volver</button>
+  </div>
+</div>
+
+<script>
+const TEACHER_EMAIL = 'benjamintlvr@gmail.com';
+const ADMIN_PASS = 'Marvin2026'; // Cambia aquí tu contraseña de administrador
+const EXAM_VERSION = 'v1_2026';
+const QUESTION_LIMIT = 25;
+const SECONDS_PER_QUESTION = 45;
+const MAX_SCORE = 100;
+const POINTS_PER_QUESTION = MAX_SCORE / QUESTION_LIMIT;
+const DB_NAME = 'DesafioInformaticaDB';
+const STORE_NAME = 'registros_alumnos';
+
+const LOCK_KEY = `exam_lock_${EXAM_VERSION}`;
+const SESSION_KEY = `exam_session_${EXAM_VERSION}`;
+const COMPLETED_KEY = `exam_completed_${EXAM_VERSION}`;
+
+let isAdminUnlocked = false;
+
+function syncAdminPanels() {
+  document.getElementById('admin-panel-register').classList.toggle('hidden', !isAdminUnlocked);
+  document.getElementById('admin-panel-result').classList.toggle('hidden', !isAdminUnlocked);
+}
+
+window.requestAdminAccess = function() {
+  if (isAdminUnlocked) {
+    syncAdminPanels();
+    return;
+  }
+  const pass = prompt('Ingrese la contraseña de administrador:');
+  if (pass === null) return;
+  if (pass === ADMIN_PASS) {
+    isAdminUnlocked = true;
+    syncAdminPanels();
+    alert('Acceso administrativo habilitado.');
+  } else {
+    alert('Contraseña incorrecta.');
+  }
+};
+
+const ALL_QUESTIONS = [
+  {"q": "¿Qué es la informática?", "opts": ["La ciencia que estudia únicamente las máquinas de escribir.", "El conjunto de conocimientos científicos y técnicas para el tratamiento automático de la información.", "La ciencia que estudia exclusivamente los teléfonos celulares.", "El estudio de los componentes eléctricos."], "ans": 1, "cat": "info"},
+  {"q": "¿En qué año se creó el término informática?", "opts": ["1950.", "1962.", "1975.", "1980."], "ans": 1, "cat": "info"},
+  {"q": "¿En qué país se creó el término informática?", "opts": ["España.", "Alemania.", "Francia.", "Estados Unidos."], "ans": 2, "cat": "info"},
+  {"q": "¿Cuáles son las tres tareas básicas de un sistema informático?", "opts": ["Guardar, imprimir y eliminar.", "Entrada, proceso y salida.", "Copiar, pegar y cortar.", "Abrir, cerrar y guardar."], "ans": 1, "cat": "info"},
+  {"q": "¿Qué significa la entrada de información?", "opts": ["La transmisión de resultados.", "La eliminación de datos.", "La captación de la información.", "La impresión de documentos."], "ans": 2, "cat": "info"},
+  {"q": "¿Qué significa el procesamiento de información?", "opts": ["El tratamiento de la información.", "La captura de imágenes.", "La eliminación de archivos.", "La impresión de resultados."], "ans": 0, "cat": "info"},
+  {"q": "¿Qué es el hardware de una computadora?", "opts": ["Los programas instalados.", "Las partes físicas de una computadora.", "Los documentos digitales.", "Los sistemas operativos."], "ans": 1, "cat": "hw"},
+  {"q": "¿Qué tipos de partes reconoce la presentación en una computadora?", "opts": ["Internas y externas.", "Digitales y virtuales.", "Públicas y privadas.", "Manuales y automáticas."], "ans": 0, "cat": "hw"},
+  {"q": "¿Cuál de los siguientes temas forma parte de la unidad de hardware?", "opts": ["Combinación de correspondencia.", "Memoria central o principal.", "Diseño de diapositivas.", "Tablas dinámicas."], "ans": 1, "cat": "hw"},
+  {"q": "¿Qué es el software?", "opts": ["La parte física de la computadora.", "El soporte lógico de una computadora.", "El monitor de una computadora.", "El teclado y el mouse."], "ans": 1, "cat": "sw"},
+  {"q": "¿Qué es una imagen ISO según la presentación?", "opts": ["Una fotografía tomada con una cámara.", "Una réplica exacta de un CD, DVD o Blu-Ray.", "Un documento de Word.", "Una hoja de cálculo."], "ans": 1, "cat": "sw"},
+  {"q": "¿Qué es BIOS?", "opts": ["Un procesador de textos.", "Un sistema de arranque clásico basado en firmware.", "Una hoja de cálculo.", "Un programa para realizar presentaciones."], "ans": 1, "cat": "sw"},
+  {"q": "¿Qué es UEFI?", "opts": ["La evolución moderna de BIOS.", "Un programa para crear documentos.", "Un tipo de memoria USB.", "Una aplicación de Excel."], "ans": 0, "cat": "sw"},
+  {"q": "¿Qué es una memoria USB booteable?", "opts": ["Una memoria preparada para iniciar o instalar un sistema operativo.", "Una memoria que solamente almacena fotografías.", "Un dispositivo que reemplaza al procesador.", "Una memoria que no puede guardar archivos."], "ans": 0, "cat": "usb"},
+  {"q": "¿Qué es una partición de disco?", "opts": ["Una división lógica de un disco en unidades, como C: y D:.", "Un programa para editar imágenes.", "Un aplicación para navegar por internet.", "Un tipo de procesador."], "ans": 0, "cat": "disk"},
+  {"q": "¿Qué característica corresponde a MBR?", "opts": ["Es un formato moderno sin límites prácticos.", "Es un formato antiguo de tabla de particiones con un límite de hasta 2 TB.", "Es un programa de Microsoft Office.", "Es un tipo de memoria RAM."], "ans": 1, "cat": "disk"},
+  {"q": "¿Qué característica corresponde a GPT?", "opts": ["Es un formato moderno de tabla de particiones.", "Es un sistema operativo móvil.", "Es un procesador de textos.", "Es un tipo de impresora."], "ans": 0, "cat": "disk"},
+  {"q": "¿Cuánta memoria RAM puede administrar un sistema de 32 bits?", "opts": ["Hasta 2 GB.", "Hasta 4 GB.", "Hasta 16 GB.", "Hasta 128 GB."], "ans": 1, "cat": "sw"},
+  {"q": "¿Cuál es la combinación recomendada para equipos actuales?", "opts": ["BIOS + MBR + 32 bits.", "UEFI + GPT + 64 bits.", "BIOS + GPT + 16 bits.", "MBR + 32 bits + Linux."], "ans": 1, "cat": "sw"},
+  {"q": "¿Qué permite la multitarea en Windows?", "opts": ["Ejecutar varios programas al mismo tiempo.", "Utilizar únicamente un programa.", "Apagar automáticamente la computadora.", "Eliminar todos los archivos."], "ans": 0, "cat": "win"},
+  {"q": "¿Cuántos caracteres pueden tener los nombres largos de archivos?", "opts": ["50 caracteres.", "100 caracteres.", "255 caracteres.", "500 caracteres."], "ans": 2, "cat": "win"},
+  {"q": "¿Qué función de Excel permite calcular el promedio de varios valores?", "opts": ["=MAX", "=MIN", "=PROMEDIO", "=SI"], "ans": 2, "cat": "excel"},
+  {"q": "¿Para qué se utiliza la función =SI() en Excel?", "opts": ["Para realizar una evaluación condicional.", "Para insertar imágenes.", "Para crear diapositivas.", "Para cambiar el sistema operativo."], "ans": 0, "cat": "excel"},
+  {"q": "¿Para qué se utiliza principalmente la herramienta Rufus?", "opts": ["Para formatear y crear memorias USB booteables a partir de imágenes ISO.", "Para editar fotografías y videos.", "Para diseñar presentaciones con animaciones.", "Para realizar cálculos financieros."], "ans": 0, "cat": "usb"},
+  {"q": "¿Cuál de los siguientes es un ejemplo de navegador web (programa para ver páginas web) y NO un buscador?", "opts": ["Google Chrome.", "Google Search.", "Bing.", "DuckDuckGo."], "ans": 0, "cat": "web"}
+];
+
+const ILLUSTRATIONS = {
+  info: `<svg viewBox="0 0 360 110"><rect x="30" y="20" width="90" height="70" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="75" y="60" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e3a8a">ENTRADA</text><line x1="120" y1="55" x2="145" y2="55" stroke="#0284c7" stroke-width="3"/><rect x="145" y="20" width="90" height="70" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/><text x="190" y="60" text-anchor="middle" font-size="13" font-weight="bold" fill="#0369a1">PROCESO</text><line x1="235" y1="55" x2="260" y2="55" stroke="#0d9488" stroke-width="3"/><rect x="260" y="20" width="90" height="70" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/><text x="305" y="60" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f766e">SALIDA</text></svg>`,
+  hw: `<svg viewBox="0 0 320 110"><rect x="95" y="15" width="130" height="80" rx="10" fill="#1e293b"/><rect x="115" y="30" width="90" height="50" rx="6" fill="#38bdf8"/><text x="160" y="60" text-anchor="middle" font-size="14" font-weight="bold" fill="#0f172a">HARDWARE</text></svg>`,
+  sw: `<svg viewBox="0 0 320 110"><rect x="75" y="18" width="170" height="74" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/><text x="160" y="52" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a8a">SOFTWARE & ARRANQUE</text><text x="160" y="72" text-anchor="middle" font-size="11" fill="#475569">ISO • BIOS • UEFI • 64-bit</text></svg>`,
+  usb: `<svg viewBox="0 0 320 110"><rect x="85" y="32" width="110" height="46" rx="8" fill="#0284c7"/><rect x="195" y="40" width="42" height="30" rx="4" fill="#cbd5e1" stroke="#475569" stroke-width="2"/><text x="140" y="60" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">USB BOOT</text></svg>`,
+  disk: `<svg viewBox="0 0 320 110"><rect x="50" y="30" width="220" height="50" rx="10" fill="#f1f5f9" stroke="#334155" stroke-width="2"/><line x1="160" y1="30" x2="160" y2="80" stroke="#334155" stroke-width="2" stroke-dasharray="4"/><text x="105" y="60" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e3a8a">PARTICIÓN 1</text><text x="215" y="60" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f766e">PARTICIÓN 2</text></svg>`,
+  win: `<svg viewBox="0 0 320 110"><rect x="70" y="20" width="80" height="65" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><rect x="170" y="25" width="80" height="65" rx="6" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/><text x="160" y="102" text-anchor="middle" font-size="11" font-weight="bold" fill="#334155">MULTITAREA Y ARCHIVOS</text></svg>`,
+  excel: `<svg viewBox="0 0 320 110"><rect x="75" y="22" width="170" height="66" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="160" y="52" text-anchor="middle" font-size="14" font-weight="bold" fill="#166534">HOJA DE CÁLCULO</text><text x="160" y="72" text-anchor="middle" font-size="12" font-weight="bold" fill="#15803d">=PROMEDIO()  •  =SI()</text></svg>`,
+  web: `<svg viewBox="0 0 320 110"><rect x="65" y="20" width="190" height="70" rx="10" fill="#f8fafc" stroke="#0284c7" stroke-width="2"/><circle cx="85" cy="34" r="4" fill="#ef4444"/><circle cx="99" cy="34" r="4" fill="#f59e0b"/><circle cx="113" cy="34" r="4" fill="#22c55e"/><text x="160" y="66" text-anchor="middle" font-size="13" font-weight="bold" fill="#0369a1">NAVEGADOR WEB</text></svg>`
+};
+
+let db = null;
+let currentStudent = null;
+let quizQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let answersHistory = [];
+let timeLeft = SECONDS_PER_QUESTION;
+let timerInterval = null;
+let answeredCurrent = false;
+let currentRecord = null;
+let previousScreenBeforeDb = 'screen-register';
+
+function normalizeStudentKey(student) {
+  const n = (student.nombre || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  const a = (student.apellido || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  const s = (student.sede || '').trim().toLowerCase();
+  return `${EXAM_VERSION}__${s}__${n}__${a}`;
+}
+
+function getLockState() {
+  try {
+    return JSON.parse(localStorage.getItem(LOCK_KEY) || 'null');
+  } catch {
+    return null;
+  }
+}
+
+function setLockState(data) {
+  localStorage.setItem(LOCK_KEY, JSON.stringify(data));
+}
+
+function saveSessionState() {
+  if (!currentStudent) return;
+  const payload = {
+    student: currentStudent,
+    quizQuestions,
+    currentIndex,
+    score,
+    answersHistory,
+    timeLeft,
+    answeredCurrent,
+    updatedAt: new Date().toISOString()
+  };
+  localStorage.setItem(SESSION_KEY, JSON.stringify(payload));
+}
+
+function clearSessionState() {
+  localStorage.removeItem(SESSION_KEY);
+}
+
+function saveCompletedRecordToStorage(record) {
+  localStorage.setItem(COMPLETED_KEY, JSON.stringify(record));
+  setLockState({
+    status: 'completed',
+    studentKey: normalizeStudentKey(record.student),
+    completedAt: record.fecha
+  });
+}
+
+function getCompletedRecordFromStorage() {
+  try {
+    return JSON.parse(localStorage.getItem(COMPLETED_KEY) || 'null');
+  } catch {
+    return null;
+  }
+}
+
+function playBeep(freq = 660, duration = 0.18) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.value = 0.08;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch {}
+}
+
+function shuffleArray(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function showScreen(id) {
+  ['screen-register', 'screen-quiz', 'screen-result', 'screen-db'].forEach(s => {
+    document.getElementById(s).classList.toggle('hidden', s !== id);
+  });
+  syncAdminPanels();
+}
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = (e) => {
+      const database = e.target.result;
+      if (!database.objectStoreNames.contains(STORE_NAME)) {
+        const store = database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+        store.createIndex('studentKey', 'studentKey', { unique: false });
+        store.createIndex('sede', 'student.sede', { unique: false });
+      }
+    };
+    req.onsuccess = (e) => {
+      db = e.target.result;
+      resolve(db);
+    };
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+
+async function addRecordToDB(record) {
+  if (!db) await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.add(record);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function getAllRecordsFromDB() {
+  if (!db) await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function hasStudentAlreadyTakenExamInDB(studentKey) {
+  const records = await getAllRecordsFromDB();
+  return records.some(r => r.studentKey === studentKey);
+}
+
+async function updateDbCount() {
+  const records = await getAllRecordsFromDB();
+  document.getElementById('db-count').textContent = records.length;
+}
+
+function applyRegisterLockUI() {
+  const lock = getLockState();
+  const banner = document.getElementById('locked-banner');
+  const startBtn = document.getElementById('start-btn');
+  const inputs = document.querySelectorAll('#register-form input, #register-form select');
+  if (lock) {
+    banner.classList.remove('hidden');
+    startBtn.disabled = true;
+    startBtn.textContent = '🔒 Evaluación ya iniciada/finalizada';
+    inputs.forEach(el => { el.disabled = true; });
+  } else {
+    banner.classList.add('hidden');
+    startBtn.disabled = false;
+    startBtn.textContent = '🚀 Iniciar Evaluación';
+    inputs.forEach(el => { el.disabled = false; });
+  }
+}
+
+function buildPreparedQuestions() {
+  const picked = shuffleArray(ALL_QUESTIONS).slice(0, QUESTION_LIMIT);
+  return picked.map(item => {
+    const indexedOpts = item.opts.map((text, idx) => ({ text, isCorrect: idx === item.ans }));
+    const shuffledOpts = shuffleArray(indexedOpts);
+    return {
+      q: item.q,
+      cat: item.cat,
+      opts: shuffledOpts.map(o => o.text),
+      ans: shuffledOpts.findIndex(o => o.isCorrect)
+    };
+  });
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    if (answeredCurrent) return;
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 5 && timeLeft > 0) {
+      playBeep(880, 0.12);
+    }
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      handleAnswer(null, true);
+    }
+    saveSessionState();
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const mins = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+  const secs = String(timeLeft % 60).padStart(2, '0');
+  document.getElementById('timer-text').textContent = `${mins}:${secs}`;
+  document.getElementById('timer-box').classList.toggle('danger', timeLeft <= 10);
+}
+
+function renderQuestion() {
+  answeredCurrent = false;
+  const qObj = quizQuestions[currentIndex];
+  document.getElementById('student-badge').textContent = `${currentStudent.nombre} ${currentStudent.apellido} (${currentStudent.sede})`;
+  document.getElementById('q-counter').textContent = `Pregunta ${currentIndex + 1} de ${quizQuestions.length}`;
+  document.getElementById('live-score').textContent = `Puntaje: ${score} / ${MAX_SCORE} pts`;
+  document.getElementById('progress-fill').style.width = `${((currentIndex + 1) / quizQuestions.length) * 100}%`;
+  document.getElementById('illustration-box').innerHTML = ILLUSTRATIONS[qObj.cat] || ILLUSTRATIONS.info;
+  document.getElementById('question-text').textContent = qObj.q;
+
+  const feedback = document.getElementById('feedback-msg');
+  feedback.className = 'feedback-msg';
+  feedback.textContent = '';
+
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.classList.add('hidden');
+  nextBtn.textContent = currentIndex === quizQuestions.length - 1 ? 'Ver Resultado Final 🏆' : 'Siguiente Pregunta ➡️';
+
+  const letters = ['A', 'B', 'C', 'D'];
+  const optionsList = document.getElementById('options-list');
+  optionsList.innerHTML = '';
+
+  qObj.opts.forEach((optText, idx) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[idx]}</span><span>${optText}</span>`;
+    btn.addEventListener('click', () => handleAnswer(idx, false));
+    optionsList.appendChild(btn);
+  });
+
+  startTimer();
+  saveSessionState();
+}
+
+function handleAnswer(selectedIdx, timedOut) {
+  if (answeredCurrent) return;
+  answeredCurrent = true;
+  clearInterval(timerInterval);
+
+  const qObj = quizQuestions[currentIndex];
+  const buttons = document.querySelectorAll('#options-list .option-btn');
+  buttons.forEach(b => { b.disabled = true; });
+
+  const isCorrect = !timedOut && selectedIdx === qObj.ans;
+  if (isCorrect) {
+    score += POINTS_PER_QUESTION;
+    buttons[selectedIdx].classList.add('correct');
+    playBeep(740, 0.16);
+  } else {
+    if (selectedIdx !== null && buttons[selectedIdx]) {
+      buttons[selectedIdx].classList.add('wrong');
+    }
+    buttons[qObj.ans].classList.add('correct');
+    playBeep(260, 0.25);
+  }
+
+  document.getElementById('live-score').textContent = `Puntaje: ${score} / ${MAX_SCORE} pts`;
+
+  const feedback = document.getElementById('feedback-msg');
+  feedback.classList.add('show');
+  if (timedOut) {
+    feedback.style.background = '#fee2e2';
+    feedback.style.color = '#991b1b';
+    feedback.textContent = `⏰ Tiempo agotado. Respuesta correcta: ${qObj.opts[qObj.ans]}`;
+  } else if (isCorrect) {
+    feedback.style.background = '#dcfce7';
+    feedback.style.color = '#166534';
+    feedback.textContent = `✅ ¡Correcto! +${POINTS_PER_QUESTION} puntos.`;
+  } else {
+    feedback.style.background = '#fee2e2';
+    feedback.style.color = '#991b1b';
+    feedback.textContent = `❌ Incorrecto. Respuesta correcta: ${qObj.opts[qObj.ans]}`;
+  }
+
+  answersHistory.push({
+    numero: currentIndex + 1,
+    pregunta: qObj.q,
+    respuestaAlumno: timedOut ? 'Sin responder (Tiempo agotado)' : qObj.opts[selectedIdx],
+    respuestaCorrecta: qObj.opts[qObj.ans],
+    correcta: isCorrect,
+    puntos: isCorrect ? POINTS_PER_QUESTION : 0
+  });
+
+  document.getElementById('next-btn').classList.remove('hidden');
+  saveSessionState();
+}
+
+async function finishExam() {
+  clearInterval(timerInterval);
+  clearSessionState();
+
+  const correctCount = answersHistory.filter(a => a.correcta).length;
+  const record = {
+    studentKey: normalizeStudentKey(currentStudent),
+    student: currentStudent,
+    score,
+    maxScore: MAX_SCORE,
+    correctCount,
+    totalQuestions: quizQuestions.length,
+    fecha: new Date().toLocaleString('es-NI'),
+    respuestas: answersHistory
+  };
+
+  currentRecord = record;
+  saveCompletedRecordToStorage(record);
+  await addRecordToDB(record);
+  await updateDbCount();
+  renderResultScreen(record);
+}
+
+function renderResultScreen(record) {
+  currentRecord = record;
+  showScreen('screen-result');
+
+  document.getElementById('final-score').textContent = record.score;
+  document.getElementById('final-percent').textContent = `de ${record.maxScore} pts (${record.correctCount}/${record.totalQuestions})`;
+  document.getElementById('result-title').textContent = record.score >= 60 ? '¡Excelente Trabajo!' : '¡Evaluación Finalizada!';
+  document.getElementById('result-subtitle').textContent = `Obtuviste ${record.score} de ${record.maxScore} puntos (${record.correctCount} aciertos de ${record.totalQuestions} preguntas).`;
+  document.getElementById('email-status').textContent = `✅ Registro guardado localmente (${record.fecha}) • Docente: ${TEACHER_EMAIL}`;
+
+  document.getElementById('student-summary').innerHTML = `
+    <div><strong>Estudiante</strong><span>${record.student.nombre} ${record.student.apellido}</span></div>
+    <div><strong>Sede</strong><span>${record.student.sede}</span></div>
+    <div><strong>Sexo</strong><span>${record.student.sexo}</span></div>
+    <div><strong>Fecha</strong><span>${record.fecha}</span></div>
+  `;
+
+  document.getElementById('answers-log').innerHTML = record.respuestas.map(item => `
+    <div class="answer-item">
+      <div><strong>${item.numero}. ${item.pregunta}</strong></div>
+      <div style="margin-top:4px;">Tu respuesta: <span class="${item.correcta ? 'tag-ok' : 'tag-bad'}">${item.respuestaAlumno}</span> (${item.puntos} pts)</div>
+      ${!item.correcta ? `<div style="margin-top:2px; color:#15803d;">Correcta: <strong>${item.respuestaCorrecta}</strong></div>` : ''}
+    </div>
+  `).join('');
+}
+
+function downloadCSV(filename, csvContent) {
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function escapeCSV(val) {
+  const str = String(val ?? '').replace(/"/g, '""');
+  return `"${str}"`;
+}
+
+async function renderDBList() {
+  const records = await getAllRecordsFromDB();
+  const sedeFilter = document.getElementById('db-filter-sede').value;
+  const filtered = sedeFilter === 'ALL' ? records : records.filter(r => r.student.sede === sedeFilter);
+  const listEl = document.getElementById('db-list');
+  const detailEl = document.getElementById('db-detail-box');
+  detailEl.classList.add('hidden');
+
+  if (!filtered.length) {
+    listEl.innerHTML = '<div class="answer-item">No hay registros almacenados para este filtro.</div>';
+    return;
+  }
+
+  listEl.innerHTML = filtered.map(r => `
+    <div class="db-row">
+      <div>
+        <strong>${r.student.nombre} ${r.student.apellido}</strong> • <span class="badge" style="padding:2px 8px; font-size:0.78rem;">${r.student.sede}</span> • ${r.student.sexo}
+        <div style="font-size:0.8rem; color:#64748b; margin-top:2px;">${r.fecha} • ${r.correctCount}/${r.totalQuestions} correctas</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-weight:800; color:#1e3a8a;">${r.score}/${r.maxScore} pts</span>
+        <button type="button" class="btn btn-outline btn-sm" style="margin-top:0;" onclick="viewRecordDetail(${r.id})">Ver detalle</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.viewRecordDetail = async function(id) {
+  const records = await getAllRecordsFromDB();
+  const rec = records.find(r => r.id === id);
+  const detailEl = document.getElementById('db-detail-box');
+  if (!rec) return;
+  detailEl.classList.remove('hidden');
+  detailEl.innerHTML = `
+    <div style="margin-bottom:8px;"><strong>Detalle de ${rec.student.nombre} ${rec.student.apellido} (${rec.score}/${rec.maxScore} pts)</strong></div>
+    ${rec.respuestas.map(item => `
+      <div class="answer-item">
+        <div><strong>${item.numero}. ${item.pregunta}</strong></div>
+        <div>Respuesta: <span class="${item.correcta ? 'tag-ok' : 'tag-bad'}">${item.respuestaAlumno}</span> (${item.puntos} pts)</div>
+      </div>
+    `).join('')}
+  `;
+};
+
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (getLockState()) {
+    applyRegisterLockUI();
+    return;
+  }
+
+  const student = {
+    nombre: document.getElementById('nombre').value.trim(),
+    apellido: document.getElementById('apellido').value.trim(),
+    sede: document.getElementById('sede').value,
+    sexo: document.getElementById('sexo').value
+  };
+
+  const studentKey = normalizeStudentKey(student);
+  const alreadyInDB = await hasStudentAlreadyTakenExamInDB(studentKey);
+  if (alreadyInDB) {
+    setLockState({ status: 'completed', studentKey, completedAt: new Date().toISOString() });
+    applyRegisterLockUI();
+    alert('Este estudiante ya presentó la evaluación.');
+    return;
+  }
+
+  currentStudent = student;
+  quizQuestions = buildPreparedQuestions();
+  currentIndex = 0;
+  score = 0;
+  answersHistory = [];
+  timeLeft = SECONDS_PER_QUESTION;
+
+  setLockState({ status: 'in_progress', studentKey, startedAt: new Date().toISOString() });
+  saveSessionState();
+  showScreen('screen-quiz');
+  renderQuestion();
+});
+
+document.getElementById('next-btn').addEventListener('click', () => {
+  if (currentIndex < quizQuestions.length - 1) {
+    currentIndex++;
+    timeLeft = SECONDS_PER_QUESTION;
+    saveSessionState();
+    renderQuestion();
+  } else {
+    finishExam();
+  }
+});
+
+document.getElementById('download-csv-btn').addEventListener('click', () => {
+  if (!isAdminUnlocked) { requestAdminAccess(); if (!isAdminUnlocked) return; }
+  if (!currentRecord) return;
+  const rows = [
+    ['Nombre', 'Apellido', 'Sede', 'Sexo', 'Fecha', 'Puntaje', 'Puntaje Maximo', 'Pregunta', 'Respuesta Alumno', 'Respuesta Correcta', 'Puntos'],
+    ...currentRecord.respuestas.map(r => [
+      currentRecord.student.nombre,
+      currentRecord.student.apellido,
+      currentRecord.student.sede,
+      currentRecord.student.sexo,
+      currentRecord.fecha,
+      currentRecord.score,
+      currentRecord.maxScore,
+      r.pregunta,
+      r.respuestaAlumno,
+      r.respuestaCorrecta,
+      r.puntos
+    ])
+  ];
+  const csv = rows.map(row => row.map(escapeCSV).join(',')).join('\n');
+  downloadCSV(`resultado_${currentRecord.student.nombre}_${currentRecord.student.apellido}.csv`, csv);
+});
+
+document.getElementById('open-db-btn').addEventListener('click', async () => {
+  if (!isAdminUnlocked) { requestAdminAccess(); if (!isAdminUnlocked) return; }
+  previousScreenBeforeDb = 'screen-register';
+  showScreen('screen-db');
+  await renderDBList();
+});
+
+document.getElementById('result-open-db-btn').addEventListener('click', async () => {
+  if (!isAdminUnlocked) { requestAdminAccess(); if (!isAdminUnlocked) return; }
+  previousScreenBeforeDb = 'screen-result';
+  showScreen('screen-db');
+  await renderDBList();
+});
+
+document.getElementById('back-from-db-btn').addEventListener('click', () => {
+  const completed = getCompletedRecordFromStorage();
+  if (completed && previousScreenBeforeDb === 'screen-result') {
+    renderResultScreen(completed);
+  } else {
+    showScreen(previousScreenBeforeDb);
+    applyRegisterLockUI();
+  }
+});
+
+document.getElementById('db-filter-sede').addEventListener('change', renderDBList);
+
+document.getElementById('export-all-csv-btn').addEventListener('click', async () => {
+  const records = await getAllRecordsFromDB();
+  const rows = [
+    ['Nombre', 'Apellido', 'Sede', 'Sexo', 'Fecha', 'Correctas', 'Total', 'Puntaje', 'Puntaje Maximo'],
+    ...records.map(r => [
+      r.student.nombre, r.student.apellido, r.student.sede, r.student.sexo,
+      r.fecha, r.correctCount, r.totalQuestions, r.score, r.maxScore
+    ])
+  ];
+  downloadCSV('todos_los_alumnos.csv', rows.map(row => row.map(escapeCSV).join(',')).join('\n'));
+});
+
+document.getElementById('export-json-btn').addEventListener('click', async () => {
+  const records = await getAllRecordsFromDB();
+  const blob = new Blob([JSON.stringify(records, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'base_datos_alumnos.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('clear-db-btn').addEventListener('click', async () => {
+  if (!confirm('¿Desea vaciar todos los registros de IndexedDB?')) return;
+  if (!db) await openDB();
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  tx.objectStore(STORE_NAME).clear();
+  tx.oncomplete = async () => {
+    await updateDbCount();
+    await renderDBList();
+  };
+});
+
+window.addEventListener('beforeunload', (e) => {
+  if (!document.getElementById('screen-quiz').classList.contains('hidden')) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+(async function init() {
+  await openDB();
+  await updateDbCount();
+  syncAdminPanels();
+
+  const completed = getCompletedRecordFromStorage();
+  if (completed) {
+    setLockState({ status: 'completed', studentKey: completed.studentKey, completedAt: completed.fecha });
+    renderResultScreen(completed);
+    return;
+  }
+
+  const rawSession = localStorage.getItem(SESSION_KEY);
+  if (rawSession) {
+    try {
+      const session = JSON.parse(rawSession);
+      if (session && session.student && Array.isArray(session.quizQuestions) && session.quizQuestions.length > 0) {
+        currentStudent = session.student;
+        quizQuestions = session.quizQuestions;
+        currentIndex = session.currentIndex || 0;
+        score = session.score || 0;
+        answersHistory = session.answersHistory || [];
+        timeLeft = typeof session.timeLeft === 'number' ? session.timeLeft : SECONDS_PER_QUESTION;
+        showScreen('screen-quiz');
+        renderQuestion();
+        return;
+      }
+    } catch {}
+  }
+
+  applyRegisterLockUI();
+  showScreen('screen-register');
+})();
+</script>
+</body>
+</html>
